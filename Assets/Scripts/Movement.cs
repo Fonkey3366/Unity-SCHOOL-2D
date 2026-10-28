@@ -15,6 +15,10 @@ public class Movement : MonoBehaviour
 
     public float speed;
 
+    [Header("powerups")]
+    public float speedboost;
+    public bool Effectcooldown;
+
     void Start()
     {
 
@@ -25,7 +29,7 @@ public class Movement : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         vertical = Input.GetAxisRaw("Vertical");
 
-        rb.velocity = new Vector2(horizontal * speed, vertical * speed);
+        rb.velocity = new Vector2(horizontal * speed, vertical * 0);
 
         if (horizontal > 0)
         {
@@ -38,5 +42,33 @@ public class Movement : MonoBehaviour
             Camera.position = Player.position + new Vector3(0f, 0f, -10f);
 
         Debug.Log("positie:" + Player.transform.position);
+    }
+
+    public void Powerup(string type)    
+    {
+        if (type == "Speed")
+        {
+            speed = speedboost;
+            StartCoroutine(SpeedReset(2));
+        }
+
+        if (type == "Slowed")
+        {
+            speed = 3f;
+            StartCoroutine(SpeedReset(3));
+        }
+    }
+
+    IEnumerator SpeedReset(int seconds)
+    {
+        if (!Effectcooldown)
+        {
+            yield return new WaitForSeconds(seconds);
+            speed = 5f;
+        }
+        else
+        {
+            Debug.Log("Cooldown: " + Effectcooldown);
+        }
     }
 }
